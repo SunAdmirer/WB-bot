@@ -52,7 +52,7 @@ class Referrals(TimedBaseModel):
     id = sa.Column(sa.Integer, primary_key=True, nullable=False, index=True)
     recruiter_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)
     recruit_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)
-    bonus = sa.Column(sa.Boolean, default=True)
+    bonus = sa.Column(sa.Boolean, default=True)  # True - бонус еще не получен
 
     def __repr__(self):
         return f"{self.id}"

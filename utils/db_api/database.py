@@ -11,5 +11,5 @@ async def create_db():
     db.gino: GinoSchemaVisitor
 
     # создание бд
-    await db.gino.drop_all()
+    # await db.gino.drop_all()
     await db.gino.create_all()

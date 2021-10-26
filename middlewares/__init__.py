@@ -1,9 +1,10 @@
 from aiogram import Dispatcher
 
 from loader import dp
+from .get_user import GetUser
 from .throttling import ThrottlingMiddleware
 
 
 if __name__ == "middlewares":
-    pass
+    dp.middleware.setup(GetUser())
     # dp.middleware.setup(ThrottlingMiddleware())
