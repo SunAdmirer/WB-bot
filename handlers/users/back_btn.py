@@ -9,7 +9,7 @@ from utils.db_api.models import Users
 
 
 # Нажатия на книпки Назад и тд
-@dp.callback_query_handler(NotBanned(), back_btn_cd.filter())
+@dp.callback_query_handler(NotBanned(), back_btn_cd.filter(), state="*")
 async def back_btn(call: types.CallbackQuery, callback_data: dict, user: Users, state: FSMContext, **kwargs):
     nav_btn = callback_data.get('nav_btn')
 

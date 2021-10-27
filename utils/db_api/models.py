@@ -86,10 +86,10 @@ class Orders(TimedBaseModel):
     total_amount = sa.Column(sa.Integer, nullable=False)  # Сколько уже выполнили
     goods_name = sa.Column(sa.String(40), nullable=False)  # Название товара
     goods_description = sa.Column(sa.String(200), nullable=False)  # Описание товара
-    order_description = sa.Column(sa.String(400), nullable=False)  # Описание задания
+    order_description = sa.Column(sa.String(400), default='-', nullable=False)  # Описание задания
     goods_link = sa.Column(sa.String(255), nullable=False)  # Ссылка на товар
     contacts = sa.Column(sa.String(255), nullable=False)  # Контакт (для связи с админом)
-    goods_cost = sa.Column(sa.Numeric(precision=10, scale=2), nullable=False)  # Стоимость товара
+    goods_cost = sa.Column(sa.Numeric(precision=10, scale=2), default='-', nullable=False)  # Стоимость товара
     order_cost = sa.Column(sa.Numeric(precision=10, scale=2), nullable=False)  # Стоимость задания
     paid_for = sa.Column(sa.Boolean, default=False, nullable=False)  # Оплачен ли заказ
     performed = sa.Column(sa.Boolean, default=False, nullable=False)  # Выполнен ли заказ

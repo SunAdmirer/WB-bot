@@ -2,6 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 
 from filters import NotBanned
+from handlers.users.create_order.create_order_menu import create_order_menu
 from handlers.users.notifications import notifications
 from keyboards.inline.callback_datas import main_menu_cd
 from keyboards.inline.main_menu_kb import main_menu_kb
@@ -30,7 +31,7 @@ async def main_menu_nav(call: types.CallbackQuery, callback_data: dict, user: Us
 
     # Все функции
     functions = {
-        'create_order': '',
+        'create_order': create_order_menu,
         'list_orders': '',
         'referrals': '',
         'support': '',

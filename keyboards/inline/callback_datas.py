@@ -8,3 +8,6 @@ main_menu_cd = CallbackData('main_menu', 'nav_btn')
 
 # CallbackData для настройки уведомлений
 notifications_cd = CallbackData("notifications", "status")
+
+# CallbackData для меню создания заказа
+create_order_menu_cd = CallbackData('create_order_menu', 'nav_btn')
