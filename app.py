@@ -2,6 +2,7 @@ from aiogram import executor
 
 from loader import dp, bot, start_scheduler
 import middlewares, filters, handlers
+from utils.db_api.add_to_db_default_data import add_to_db_default_data
 from utils.db_api.database import create_db
 from utils.misc.logger import setup_logger
 from utils.notify_admins import on_startup_notify
@@ -12,6 +13,9 @@ async def on_startup(dispatcher):
 
     # Соединение с бд
     await create_db()
+
+    # Добавление default data в базу. (Цены на услуги и тд)
+    await add_to_db_default_data()
 
     # запуск scheduler
     start_scheduler()
