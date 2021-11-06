@@ -21,9 +21,41 @@ async def get_user_by_telegram_id(telegram_id: int) -> Users:
         logger.info(ex)
 
 
+# Получить юзера за id
+async def get_user_by_id(user_id: int) -> Users:
+    try:
+        return await Users.query.where(Users.id == user_id).gino.first()
+    except Exception as ex:
+        logger.info(ex)
+
+
 # Вкл/Выкл уведомления
 async def update_notification_user(telegram_id: int, notifications: bool):
     try:
         await Users.update.values(notifications=notifications).where(Users.telegram_id == telegram_id).gino.status()
+    except Exception as ex:
+        logger.info(ex)
+
+
+# Увеличить баланс пользователя
+async def increase_user_balance(user_id: int, amount: float):
+    try:
+        await Users.update.values(balance=Users.balance + amount).where(Users.id == user_id).gino.status()
+    except Exception as ex:
+        logger.info(ex)
+
+
+# Увеличить баланс с реф. программы
+async def increase_user_balance_from_ref(user_id: int, amount: float):
+    try:
+        await Users.update.values(balance_from_ref=Users.balance_from_ref + amount).where(Users.id == user_id).gino.status()
+    except Exception as ex:
+        logger.info(ex)
+
+
+# Уменьшить баланс пользователя
+async def reduce_user_balance(user_id: int, amount: float):
+    try:
+        await Users.update.values(balance=Users.balance - amount).where(Users.id == user_id).gino.status()
     except Exception as ex:
         logger.info(ex)

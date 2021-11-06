@@ -1,6 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.builtin import CommandStart
+from aiogram.types import ReplyKeyboardRemove
 from loguru import logger
 
 from filters import NotBanned
@@ -16,6 +17,8 @@ from re import compile
 # Start with deep_link
 @dp.message_handler(NotBanned(), CommandStart(deep_link=compile(r"\d+")), state="*")
 async def bot_start_with_deep_link(message: types.Message, user: Users, state: FSMContext, **kwargs):
+    await state.finish()
+
     # Регистрация пользователя
     if user is None:
         # Добавление пользователя
@@ -39,10 +42,18 @@ async def bot_start_with_deep_link(message: types.Message, user: Users, state: F
             await message.answer("Ты пришел по реферальной программе")
 
             # Стартовое сообщение №1
-            await message.answer("Стартовое сообщение №1")
+            await message.answer("🔥 Краткий обзор функций бота:\n"
+                                 "1️⃣ Обмен лайками бренду на WildBerries\n"
+                                 "2️⃣ Обмен выкупами с живыми пользователями\n"
+                                 "3️⃣ Отслеживание позиций товара по ключевым слова на WildBerries\n"
+                                 "4️⃣ Отслеживание изменение цен на товар\n\n"
+                                 "🎉 Новые функции скоро:\n"
+                                 "1️⃣ Биржа услуг и товаров для поставщиков\n"
+                                 "2️⃣ Уведомления о новых заказах\n"
+                                 "3️⃣ Автовыкупы живыми пользователями")
 
             # Стартовое сообщение №2
-            await message.answer("Стартовое сообщение №2")
+            await message.answer("✅ Отлично, Ваш аккаунт зарегистрирован!")
 
             # Сообщение для рекрутера
             try:
@@ -60,16 +71,26 @@ async def bot_start_with_deep_link(message: types.Message, user: Users, state: F
 # Обычный start
 @dp.message_handler(NotBanned(), CommandStart(), state="*")
 async def bot_start(message: types.Message, user: Users, state: FSMContext, **kwargs):
+    await state.finish()
+
     # Регистрация пользователя
     if user is None:
         # Добавление пользователя
         user = await add_user(telegram_id=message.chat.id, username=message.from_user.username)
 
         # Стартовое сообщение №1
-        await message.answer("Стартовое сообщение №1")
+        await message.answer("🔥 Краткий обзор функций бота:\n"
+                             "1️⃣ Обмен лайками бренду на WildBerries\n"
+                             "2️⃣ Обмен выкупами с живыми пользователями\n"
+                             "3️⃣ Отслеживание позиций товара по ключевым слова на WildBerries\n"
+                             "4️⃣ Отслеживание изменение цен на товар\n\n"
+                             "🎉 Новые функции скоро:\n"
+                             "1️⃣ Биржа услуг и товаров для поставщиков\n"
+                             "2️⃣ Уведомления о новых заказах\n"
+                             "3️⃣ Автовыкупы живыми пользователями")
 
         # Стартовое сообщение №2
-        await message.answer("Стартовое сообщение №2")
+        await message.answer("✅ Отлично, Ваш аккаунт зарегистрирован!")
 
     # Переход в главное меню (выбор предмета)
     await main_menu(message=message, user=user, state=state)

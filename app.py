@@ -37,5 +37,5 @@ async def on_shutdown(dp):
 
 if __name__ == '__main__':
     setup_logger("INFO", ["sqlalchemy.engine", "aiogram.bot.api"])
-    executor.start_polling(dp, on_startup=on_startup, on_shutdown=on_shutdown)
+    executor.start_polling(dp, on_startup=on_startup)
 

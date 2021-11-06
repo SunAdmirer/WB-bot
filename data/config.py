@@ -6,6 +6,8 @@ env.read_env()
 BOT_TOKEN = env.str("BOT_TOKEN")
 ADMINS = env.list("ADMINS")
 
+PROVIDER_TOKEN = env.str("PROVIDER_TOKEN")
+
 POSTGRES_HOST = env.str("POSTGRES_HOST")
 POSTGRES_PORT = env.str("POSTGRES_PORT")
 POSTGRES_USER = env.str("POSTGRES_USER")

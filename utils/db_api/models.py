@@ -43,6 +43,19 @@ class Users(TimedBaseModel):
         return f"{self.telegram_id}"
 
 
+class Transaction(TimedBaseModel):
+    __tablename__ = 'transactions'
+
+    query: sa.sql.Select
+
+    id = sa.Column(sa.Integer, primary_key=True, nullable=False, index=True)
+    user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)
+    amount = sa.Column(sa.Numeric(precision=10, scale=2), default=0, nullable=False)  # Сумма пополнения
+
+    def __repr__(self):
+        return f"{self.id}"
+
+
 # Таблица рекрутеров и рекрутов
 class Referrals(TimedBaseModel):
     __tablename__ = 'referrals'
@@ -50,22 +63,9 @@ class Referrals(TimedBaseModel):
     query: sa.sql.Select
 
     id = sa.Column(sa.Integer, primary_key=True, nullable=False, index=True)
-    recruiter_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)
-    recruit_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)
+    recruiter_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)  # Кто привел
+    recruit_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)  # Кого привели
     bonus = sa.Column(sa.Boolean, default=True)  # True - бонус еще не получен
-
-    def __repr__(self):
-        return f"{self.id}"
-
-
-# Таблица типов заданий
-class TypeOrders(TimedBaseModel):
-    __tablename__ = 'type_orders'
-
-    query: sa.sql.Select
-
-    id = sa.Column(sa.Integer, primary_key=True, nullable=False, index=True)
-    type_task = sa.Column(sa.String(50), nullable=False, index=True)
 
     def __repr__(self):
         return f"{self.id}"
@@ -80,17 +80,17 @@ class Orders(TimedBaseModel):
     id = sa.Column(sa.Integer, primary_key=True, nullable=False, index=True)
     order_name = sa.Column(sa.String(30), nullable=False, index=True)  # Название задания 20.04 - 12:05
     user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)
-    type_task_id = sa.Column(sa.Integer, sa.ForeignKey('type_orders.id', ondelete="CASCADE", onupdate="CASCADE"),
-                             nullable=False, index=True)
-    goal_amount = sa.Column(sa.Integer, nullable=False)  # Сколько нужно выполнений
-    total_amount = sa.Column(sa.Integer, nullable=False)  # Сколько уже выполнили
-    goods_name = sa.Column(sa.String(40), nullable=False)  # Название товара
-    goods_description = sa.Column(sa.String(200), nullable=False)  # Описание товара
+    type_order = sa.Column(sa.String(10), nullable=False, index=True)
+    goal_amount = sa.Column(sa.Integer, default=0, nullable=False)  # Сколько нужно выполнений
+    total_amount = sa.Column(sa.Integer, default=0, nullable=False)  # Сколько уже выполнили
+    goods_name = sa.Column(sa.String(40), default='-', nullable=False)  # Название товара
     order_description = sa.Column(sa.String(400), default='-', nullable=False)  # Описание задания
-    goods_link = sa.Column(sa.String(255), nullable=False)  # Ссылка на товар
-    contacts = sa.Column(sa.String(255), nullable=False)  # Контакт (для связи с админом)
-    goods_cost = sa.Column(sa.Numeric(precision=10, scale=2), default='-', nullable=False)  # Стоимость товара
-    order_cost = sa.Column(sa.Numeric(precision=10, scale=2), nullable=False)  # Стоимость задания
+    goods_link = sa.Column(sa.String(255), default='-', nullable=False)  # Ссылка на товар
+    contacts = sa.Column(sa.String(255), default='-', nullable=False)  # Контакт (для связи с админом)
+    goods_cost = sa.Column(sa.Numeric(precision=10, scale=2), default=0, nullable=False)  # Стоимость товара
+    cashback = sa.Column(sa.Integer, default=0, nullable=False)  # Кэшбек/скидка
+    order_cost = sa.Column(sa.Numeric(precision=10, scale=2), default=0, nullable=False)  # Стоимость задания
+    confirmed = sa.Column(sa.Boolean, default=False, nullable=False)  # Подтвержден ли заказ
     paid_for = sa.Column(sa.Boolean, default=False, nullable=False)  # Оплачен ли заказ
     performed = sa.Column(sa.Boolean, default=False, nullable=False)  # Выполнен ли заказ
 
@@ -105,8 +105,26 @@ class ReservedOrders(TimedBaseModel):
     query: sa.sql.Select
 
     id = sa.Column(sa.Integer, primary_key=True, nullable=False, index=True)
-    order_id = sa.Column(sa.Integer, sa.ForeignKey('orders.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)  # Задание, которое зарезервировали
-    user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)  # Пользователь, который зарезервировал задание
+    order_id = sa.Column(sa.Integer, sa.ForeignKey('orders.id', ondelete="CASCADE", onupdate="CASCADE"),
+                         index=True)  # Задание, которое зарезервировали
+    user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"),
+                        index=True)  # Пользователь, который зарезервировал задание
+
+    def __repr__(self):
+        return f"{self.order_id}"
+
+
+# Таблица выполненных заданий исполнителя
+class PerformedOrders(TimedBaseModel):
+    __tablename__ = 'performed_orders'
+
+    query: sa.sql.Select
+
+    id = sa.Column(sa.Integer, primary_key=True, nullable=False, index=True)
+    order_id = sa.Column(sa.Integer, sa.ForeignKey('orders.id', ondelete="CASCADE", onupdate="CASCADE"),
+                         index=True)  # Задание, которое выполнили
+    user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"),
+                        index=True)  # Пользователь, который выполнил задание
 
     def __repr__(self):
         return f"{self.id}"
@@ -119,8 +137,10 @@ class ModerateOrders(TimedBaseModel):
     query: sa.sql.Select
 
     id = sa.Column(sa.Integer, primary_key=True, nullable=False, index=True)
-    order_id = sa.Column(sa.Integer, sa.ForeignKey('orders.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)  # Задание, которое проходят модерацию
-    user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)  # Пользователь, который "Выполнил" задание
+    order_id = sa.Column(sa.Integer, sa.ForeignKey('orders.id', ondelete="CASCADE", onupdate="CASCADE"),
+                         index=True)  # Задание, которое проходят модерацию
+    user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"),
+                        index=True)  # Пользователь, который "Выполнил" задание
 
     def __repr__(self):
-        return f"{self.id}"
+        return f"{self.order_id}"
