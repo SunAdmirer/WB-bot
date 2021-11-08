@@ -12,6 +12,7 @@ from handlers.users.create_order.fire_order import fire_order, goods_name_fire_o
 from handlers.users.create_order.redemption_order import redemption_order, goods_name_redemption_order, \
     order_description_redemption_order, goods_cost_redemption_order, goods_link_redemption_order, \
     contacts_redemption_order, cashback_redemption_order
+from handlers.users.list_orders.list_orders_menu import list_orders_menu
 from handlers.users.main_menu import main_menu
 from handlers.users.my_orders.my_orders_customers import my_orders_customers, my_orders_customers_nav
 from handlers.users.my_orders.my_orders_performers import my_orders_performers, my_orders_performers_nav, \
@@ -138,6 +139,9 @@ async def back_btn(call: types.CallbackQuery, callback_data: dict, user: Users, 
     # Вывести с баланса
     elif nav_btn == 'withdrawal_balance':
         function = withdrawal_balance
+
+    elif nav_btn == 'list_orders_menu':
+        function = list_orders_menu
 
     await function(
         message=call,

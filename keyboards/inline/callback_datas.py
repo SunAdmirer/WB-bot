@@ -8,6 +8,9 @@ balance_menu_cd = CallbackData('balance_menu', 'order_id')
 # CallbackData для главного меню
 main_menu_cd = CallbackData('main_menu', 'nav_btn')
 
+# CallbackData для списка заданий
+list_orders_cd = CallbackData('list_orders', 'nav_btn', 'order_id')
+
 # CallbackData для настройки уведомлений
 notifications_cd = CallbackData("notifications", "status")
 

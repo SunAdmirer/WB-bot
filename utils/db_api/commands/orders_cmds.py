@@ -27,6 +27,14 @@ async def add_order(user_id: int, type_order: str) -> Orders:
         logger.info(ex)
 
 
+# Бронируем выполнение задания за пользователем
+async def add_reserved_order_to_user(user_id: int, order_id: int):
+    try:
+        await ReservedOrders(order_id=order_id, user_id=user_id).create()
+    except Exception as ex:
+        logger.info(ex)
+
+
 # Получение заказа по id
 async def get_order_by_id(order_id: int) -> Orders:
     try:
@@ -41,6 +49,18 @@ async def get_confirmed_paid_for_orders() -> List[Orders]:
         return await Orders.query.where(
             (Orders.confirmed == True) & (Orders.paid_for == True) &
             (Orders.performed == False) & (Orders.goal_amount != Orders.total_amount)
+        ).gino.all()
+    except Exception as ex:
+        logger.info(ex)
+
+
+# Получаем все задания заданного типа, которые подтвердили и оплатили, но еще не выполненные
+async def get_confirmed_paid_for_orders_by_type(type_order: str) -> List[Orders]:
+    try:
+        return await Orders.query.where(
+            (Orders.confirmed == True) & (Orders.paid_for == True) &
+            (Orders.performed == False) & (Orders.goal_amount > Orders.total_amount) &
+            (Orders.type_order == type_order)
         ).gino.all()
     except Exception as ex:
         logger.info(ex)
@@ -94,11 +114,23 @@ async def get_reserved_performers_orders(user_id: int) -> List[ReservedOrders]:
         logger.info(ex)
 
 
+# Получаем задания что ожидают выполнения исполнителя
+async def get_reserved_performers_orders_(user_id: int) -> List[ReservedOrders]:
+    try:
+        reserved = await ReservedOrders.query.where(
+            (ReservedOrders.user_id == user_id)
+        ).gino.all()
+
+        return reserved
+    except Exception as ex:
+        logger.info(ex)
+
+
 # Получаем задания на модерации исполнителя
 async def get_moderate_performers_orders(user_id: int) -> List[ModerateOrders]:
     try:
         return await ModerateOrders.query.where(
-            (Orders.user_id == user_id)
+            (ModerateOrders.user_id == user_id)
         ).gino.all()
     except Exception as ex:
         logger.info(ex)
@@ -300,5 +332,13 @@ async def update_order_confirmed_by_id(order_id: int, confirmed: bool):
 async def update_order_paid_for_by_id(order_id: int, paid_for: bool):
     try:
         await Orders.update.values(paid_for=paid_for).where(Orders.id == order_id).gino.status()
+    except Exception as ex:
+        logger.info(ex)
+
+
+# Увеличить total_amount заказа на 1
+async def increase_by_1_orders_total_amount(order_id: int):
+    try:
+        await Orders.update.values(total_amount=Orders.total_amount + 1).where(Orders.id == order_id).gino.status()
     except Exception as ex:
         logger.info(ex)
