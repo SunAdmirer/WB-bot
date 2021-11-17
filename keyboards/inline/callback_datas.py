@@ -1,5 +1,8 @@
 from aiogram.utils.callback_data import CallbackData
 
+# CallbackData для подтверждение админов
+admins_confirmed_cd = CallbackData('admins_confirmed', 'confirm_type', 'performer_id', 'order_id', 'nav_btn')
+
 # CallbackData для кнопки Назад, главного меню и тд
 back_btn_cd = CallbackData('back_btn', 'nav_btn')
 

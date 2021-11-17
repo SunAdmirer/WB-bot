@@ -17,7 +17,8 @@ from keyboards.inline.my_orders.performers_without_orders_kb import performers_w
 from loader import dp, bot
 from utils.db_api.commands.orders_cmds import check_is_performers_orders, get_count_performed_orders_performer, \
     get_count_moderate_orders, get_count_reserved_orders, get_performed_performers_orders, \
-    get_reserved_performers_orders, get_moderate_performers_orders, get_order_by_id, add_moderate_order
+    get_reserved_performers_orders, get_moderate_performers_orders, get_order_by_id, add_moderate_order, \
+    add_media_content
 from utils.db_api.commands.price_list_cmds import get_price_by_name
 from utils.db_api.commands.users_cmds import get_user_by_id
 from utils.db_api.models import Users
@@ -261,7 +262,7 @@ async def confirm_screenshots(call: types.CallbackQuery, callback_data: dict, us
     customer = await get_user_by_id(user_id=order.user_id)
 
     # Добавить заказ в модерацию
-    await add_moderate_order(order_id=order_id, user_id=user.id)
+    moderate_order = await add_moderate_order(order_id=order_id, user_id=user.id)
 
     photos = (await state.get_data()).get("photos")
 
@@ -269,18 +270,14 @@ async def confirm_screenshots(call: types.CallbackQuery, callback_data: dict, us
 
     for photo in photos:
         media.attach_photo(photo)
+        # Добавление медиа контента для задания которое проходит модерацию
+        await add_media_content(moderate_order_id=moderate_order.id, file_id=photo)
 
     # Отправляем скриншоты админу
     await send_to_admins_media(media=media)
 
     # Отправляем выполненное задание админу
     await send_to_admins_performed_order(order=order, performer=user, customer=customer)
-
-    # Отправляем скриншоты заказчику
-    await send_to_customers_media(media=media, customer=customer)
-
-    # Отправляем выполненное задание заказчику
-    await send_to_customers_performed_order(order=order, customer=customer)
 
     await call.message.delete()
     markup = await confirm_screenshots_kb()

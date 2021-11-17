@@ -14,9 +14,10 @@ from keyboards.inline.list_orders.show_order_kb import show_order_kb
 from loader import dp
 from utils.db_api.commands.orders_cmds import get_confirmed_paid_for_orders, get_performed_performers_orders, \
     get_reserved_performers_orders_, get_confirmed_paid_for_orders_by_type, add_reserved_order_to_user, \
-    increase_by_1_orders_total_amount
+    increase_by_1_orders_total_amount, get_order_by_id
 from utils.db_api.models import Users, Orders
 from utils.misc.functions import check_order_if_suitable
+from utils.send_to_admins_app_order import send_to_admins_app_order
 
 
 async def list_orders_menu(call: types.CallbackQuery, user: Users, state: FSMContext, **kwargs):
@@ -181,16 +182,14 @@ async def execute_order(call: types.CallbackQuery, user: Users, state: FSMContex
 async def confirm_execute_order(call: types.CallbackQuery, user: Users, state: FSMContext, order_id: int, **kwargs):
     markup = await confirm_execute_order_kb()
 
-    # Бронируем выполнение задания за пользователем
-    await add_reserved_order_to_user(user_id=user.id, order_id=order_id)
+    # Достаем заказ
+    order = await get_order_by_id(order_id)
 
-    # Увеличить total_amount заказа на 1
-    await increase_by_1_orders_total_amount(order_id=order_id)
+    # Заявка на бронирование заказа в чат админов
+    await send_to_admins_app_order(order=order, performer=user)
 
-    await call.message.edit_text(text="✅ Выполнение забронировано за вами!\n\n"
-                                      "Перейдите в раздел \"Мои заказы\""
-                                      " - \"Я исполнитель\" - \"Ожидают выполнения\","
-                                      " чтобы продолжить выполнение заказа",
+    await call.message.edit_text(text="Заявка на бронирование заказа отослана на модерацию.\n\n"
+                                      "Скоро с вами свяжется администратор",
                                  reply_markup=markup)
 
 

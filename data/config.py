@@ -5,6 +5,7 @@ env.read_env()
 
 BOT_TOKEN = env.str("BOT_TOKEN")
 ADMINS = env.list("ADMINS")
+ADMINS_GROUP = env.str("ADMINS_GROUP")
 
 PROVIDER_TOKEN = env.str("PROVIDER_TOKEN")
 

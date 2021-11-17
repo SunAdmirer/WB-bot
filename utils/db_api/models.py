@@ -63,8 +63,10 @@ class Referrals(TimedBaseModel):
     query: sa.sql.Select
 
     id = sa.Column(sa.Integer, primary_key=True, nullable=False, index=True)
-    recruiter_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)  # Кто привел
-    recruit_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)  # Кого привели
+    recruiter_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"),
+                             index=True)  # Кто привел
+    recruit_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"),
+                           index=True)  # Кого привели
     bonus = sa.Column(sa.Boolean, default=True)  # True - бонус еще не получен
 
     def __repr__(self):
@@ -141,6 +143,20 @@ class ModerateOrders(TimedBaseModel):
                          index=True)  # Задание, которое проходят модерацию
     user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"),
                         index=True)  # Пользователь, который "Выполнил" задание
+    confirmed_by_admin = sa.Column(sa.Boolean, default=False, nullable=False)  # Админ подтвердил выполнение
 
     def __repr__(self):
         return f"{self.order_id}"
+
+
+# Таблица скриншотов под выполненными заказами
+class MediaContent(TimedBaseModel):
+    __tablename__ = 'media_content'
+
+    query: sa.sql.Select
+
+    id = sa.Column(sa.Integer, primary_key=True, nullable=False, index=True)
+    moderate_order_id = sa.Column(sa.Integer,
+                                  sa.ForeignKey('moderate_orders.id', ondelete="CASCADE", onupdate="CASCADE"),
+                                  index=True)  # Задание, которое проходят модерацию
+    file_id = sa.Column(sa.String)  # File id фото
