@@ -102,7 +102,7 @@ async def valid_input_favorites_order(message: types.Message, user: Users, state
 # Некорректный ввод кол-во выполнений с клавиатуры
 @dp.message_handler(NotBanned(), content_types=types.ContentTypes.ANY, state="favorites_order")
 async def invalid_input_favorites_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
-    error_msg = await message.answer("Некорректный ввод кол-во выполнений!")
+    error_msg = await message.answer("Пожалуйста, введите только число")
     await asyncio.sleep(5)
     await message.delete()
     await error_msg.delete()
@@ -141,7 +141,7 @@ async def valid_input_goods_name_favorites_order(message: types.Message, user: U
 # Некорректный ввод названия товара с клавиатуры
 @dp.message_handler(NotBanned(), content_types=types.ContentTypes.ANY, state="goods_name_favorites_order")
 async def invalid_input_goods_name_favorites_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
-    error_msg = await message.answer("Некорректный ввод названия товара с клавиатуры!")
+    error_msg = await message.answer("Пожалуйста, введите название товара")
     await asyncio.sleep(5)
     await message.delete()
     await error_msg.delete()
@@ -184,7 +184,7 @@ async def valid_input_goods_link_favorites_order(message: types.Message, user: U
 # Некорректный ввод ссылки на товар с клавиатуры
 @dp.message_handler(NotBanned(), content_types=types.ContentTypes.ANY, state="goods_link_favorites_order")
 async def invalid_input_goods_link_favorites_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
-    error_msg = await message.answer("Некорректный ввод ссылки на товар с клавиатуры!")
+    error_msg = await message.answer("Пожалуйста, введите ссылку на товар")
     await asyncio.sleep(5)
     await message.delete()
     await error_msg.delete()
@@ -231,7 +231,7 @@ async def valid_input_contacts_favorites_order(message: types.Message, user: Use
 # Некорректный ввод номера телефона с клавиатуры
 @dp.message_handler(NotBanned(), content_types=types.ContentTypes.ANY, state="contacts_favorites_order")
 async def invalid_input_contacts_favorites_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
-    error_msg = await message.answer("Некорректный ввод телефона с клавиатуры!")
+    error_msg = await message.answer("Пожалуйста, введите действительный номер телефона")
     await asyncio.sleep(5)
     await message.delete()
     await error_msg.delete()

@@ -106,7 +106,7 @@ async def valid_input_redemption_order(message: types.Message, user: Users, stat
 # Некорректный ввод кол-во выполнений с клавиатуры
 @dp.message_handler(NotBanned(), content_types=types.ContentTypes.ANY, state="redemption_order")
 async def invalid_input_redemption_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
-    error_msg = await message.answer("Некорректный ввод кол-во выполнений!")
+    error_msg = await message.answer("Пожалуйста, введите только число")
     await asyncio.sleep(5)
     await message.delete()
     await error_msg.delete()
@@ -145,7 +145,7 @@ async def valid_input_goods_name_redemption_order(message: types.Message, user: 
 # Некорректный ввод названия товара с клавиатуры
 @dp.message_handler(NotBanned(), content_types=types.ContentTypes.ANY, state="goods_name_redemption_order")
 async def invalid_input_goods_name_redemption_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
-    error_msg = await message.answer("Некорректный ввод названия товара с клавиатуры!")
+    error_msg = await message.answer("Пожалуйста, введите название товара")
     await asyncio.sleep(5)
     await message.delete()
     await error_msg.delete()
@@ -188,7 +188,7 @@ async def valid_input_order_description_redemption_order(message: types.Message,
 @dp.message_handler(NotBanned(), content_types=types.ContentTypes.ANY, state="order_description_redemption_order")
 async def invalid_input_order_description_redemption_order(message: types.Message, user: Users, state: FSMContext,
                                                            **kwargs):
-    error_msg = await message.answer("Некорректный ввод описание заказа с клавиатуры!")
+    error_msg = await message.answer("Пожалуйста, введите описание заказа")
     await asyncio.sleep(5)
     await message.delete()
     await error_msg.delete()
@@ -227,7 +227,7 @@ async def valid_input_goods_cost_redemption_order(message: types.Message, user: 
 # Некорректный ввод стоимости товара с клавиатуры
 @dp.message_handler(NotBanned(), content_types=types.ContentTypes.ANY, state="goods_cost_redemption_order")
 async def invalid_input_goods_cost_redemption_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
-    error_msg = await message.answer("Некорректный ввод стоимости товара с клавиатуры!")
+    error_msg = await message.answer("Пожалуйста, введите только число")
     await asyncio.sleep(5)
     await message.delete()
     await error_msg.delete()
@@ -247,7 +247,7 @@ async def cashback_redemption_order(call: types.CallbackQuery, user: Users, stat
 
 
 # Корректный ввод кэшбека с клавиатуры
-@dp.message_handler(NotBanned(), regexp=compile(r"^\d*$"), state="cashback_redemption_order")
+@dp.message_handler(NotBanned(), regexp=compile(r"^([5-9][\d]|100)$"), state="cashback_redemption_order")
 async def valid_input_cashback_redemption_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
     call: types.CallbackQuery = (await state.get_data()).get("call")
     current_order_id = int((await state.get_data()).get("current_order_id"))
@@ -266,7 +266,7 @@ async def valid_input_cashback_redemption_order(message: types.Message, user: Us
 # Некорректный ввод кэшбека с клавиатуры
 @dp.message_handler(NotBanned(), content_types=types.ContentTypes.ANY, state="cashback_redemption_order")
 async def invalid_input_cashback_redemption_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
-    error_msg = await message.answer("Некорректный ввод кэшбека/скидки с клавиатуры!")
+    error_msg = await message.answer("Пожалуйста, введите только число от 50 до 100")
     await asyncio.sleep(5)
     await message.delete()
     await error_msg.delete()
@@ -309,7 +309,7 @@ async def valid_input_goods_link_redemption_order(message: types.Message, user: 
 # Некорректный ввод ссылки на товар с клавиатуры
 @dp.message_handler(NotBanned(), content_types=types.ContentTypes.ANY, state="goods_link_redemption_order")
 async def invalid_input_goods_link_redemption_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
-    error_msg = await message.answer("Некорректный ввод ссылки на товар с клавиатуры!")
+    error_msg = await message.answer("Пожалуйста, введите ссылку на товар")
     await asyncio.sleep(5)
     await message.delete()
     await error_msg.delete()
@@ -356,7 +356,7 @@ async def valid_input_contacts_redemption_order(message: types.Message, user: Us
 # Некорректный ввод номера телефона с клавиатуры
 @dp.message_handler(NotBanned(), content_types=types.ContentTypes.ANY, state="contacts_redemption_order")
 async def invalid_input_contacts_redemption_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
-    error_msg = await message.answer("Некорректный ввод телефона с клавиатуры!")
+    error_msg = await message.answer("Пожалуйста, введите действительный номер телефона")
     await asyncio.sleep(5)
     await message.delete()
     await error_msg.delete()
