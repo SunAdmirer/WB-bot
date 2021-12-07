@@ -28,9 +28,17 @@ async def add_order(user_id: int, type_order: str) -> Orders:
 
 
 # Бронируем выполнение задания за пользователем
-async def add_reserved_order_to_user(user_id: int, order_id: int):
+async def add_reserved_order_to_user(user_id: int, order_id: int) -> ReservedOrders:
     try:
-        await ReservedOrders(order_id=order_id, user_id=user_id).create()
+        return await ReservedOrders(order_id=order_id, user_id=user_id).create()
+    except Exception as ex:
+        logger.info(ex)
+
+
+# Получаем забронированный заказ
+async def get_reserved_order_to_user(reserved_order_id: int) -> ReservedOrders:
+    try:
+        return await ReservedOrders.query.where(ReservedOrders.id == reserved_order_id).gino.first()
     except Exception as ex:
         logger.info(ex)
 
@@ -39,6 +47,14 @@ async def add_reserved_order_to_user(user_id: int, order_id: int):
 async def add_media_content(moderate_order_id: int, file_id: str):
     try:
         await MediaContent(moderate_order_id=moderate_order_id, file_id=file_id).create()
+    except Exception as ex:
+        logger.info(ex)
+
+
+# Получение заказа по id
+async def get_order_by_id(order_id: int) -> Orders:
+    try:
+        return await Orders.query.where(Orders.id == order_id).gino.first()
     except Exception as ex:
         logger.info(ex)
 
@@ -59,14 +75,6 @@ async def get_moderate_performers_order(performer_id: int, order_id: int) -> Mod
         return await ModerateOrders.query.where(
             (ModerateOrders.user_id == performer_id) & (ModerateOrders.order_id == order_id)
         ).gino.first()
-    except Exception as ex:
-        logger.info(ex)
-
-
-# Получение заказа по id
-async def get_order_by_id(order_id: int) -> Orders:
-    try:
-        return await Orders.query.where(Orders.id == order_id).gino.first()
     except Exception as ex:
         logger.info(ex)
 

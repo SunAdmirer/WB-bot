@@ -1,3 +1,5 @@
+from typing import List
+
 from utils.db_api.models import Users
 from loguru import logger
 
@@ -9,6 +11,14 @@ async def add_user(telegram_id: int, username: str) -> Users:
             username = "Without a username"
 
         return await Users(telegram_id=telegram_id, username=username).create()
+    except Exception as ex:
+        logger.info(ex)
+
+
+# Получаем список всех пользователей
+async def get_all_users() -> List[Users]:
+    try:
+        return await Users.query.gino.all()
     except Exception as ex:
         logger.info(ex)
 

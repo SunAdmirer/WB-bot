@@ -14,13 +14,13 @@ from keyboards.inline.my_orders.choose_performers_reserved_order_kb import choos
 from keyboards.inline.my_orders.confirm_screenshots_kb import confirm_screenshots_kb
 from keyboards.inline.my_orders.performers_with_orders_kb import performers_with_orders_kb
 from keyboards.inline.my_orders.performers_without_orders_kb import performers_without_orders_kb
-from loader import dp, bot
+from loader import dp, bot, scheduler
 from utils.db_api.commands.orders_cmds import check_is_performers_orders, get_count_performed_orders_performer, \
     get_count_moderate_orders, get_count_reserved_orders, get_performed_performers_orders, \
     get_reserved_performers_orders, get_moderate_performers_orders, get_order_by_id, add_moderate_order, \
     add_media_content
 from utils.db_api.commands.price_list_cmds import get_price_by_name
-from utils.db_api.commands.users_cmds import get_user_by_id
+from utils.db_api.commands.users_cmds import get_user_by_id, get_user_by_telegram_id
 from utils.db_api.models import Users
 from utils.send_to_admins_media import send_to_admins_media
 from utils.send_to_admins_performed_order import send_to_admins_performed_order
@@ -261,6 +261,8 @@ async def confirm_screenshots(call: types.CallbackQuery, callback_data: dict, us
     # Получаем заказчика задания
     customer = await get_user_by_id(user_id=order.user_id)
 
+    performer = await get_user_by_telegram_id(call.message.chat.id)
+
     # Добавить заказ в модерацию
     moderate_order = await add_moderate_order(order_id=order_id, user_id=user.id)
 
@@ -278,6 +280,11 @@ async def confirm_screenshots(call: types.CallbackQuery, callback_data: dict, us
 
     # Отправляем выполненное задание админу
     await send_to_admins_performed_order(order=order, performer=user, customer=customer)
+
+    notification_24h_job = scheduler.get_job(f"24h|{performer.id}-{order_id}")
+
+    if notification_24h_job:
+        notification_24h_job.remove()
 
     await call.message.delete()
     markup = await confirm_screenshots_kb()

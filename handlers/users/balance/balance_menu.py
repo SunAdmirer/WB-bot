@@ -3,6 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import LabeledPrice
 
 from filters import NotBanned
+from handlers.users.send_to_users import send_to_users
 from keyboards.inline.balance.balance_menu_kb import balance_menu_kb
 from keyboards.inline.balance.paid_for_order_kb import paid_for_order_kb
 from keyboards.inline.balance.process_successful_payment_kb import process_successful_payment_kb
@@ -144,6 +145,20 @@ async def process_successful_payment(message: types.Message, user: Users, **kwar
            f"Ваш заказ: {order.order_name}\n" \
            f"Вы можете следить за заказом перейдя в \"🛒 Мои заказы\"\n\n" \
            f"💰 Ваш баланс не будет списываться, пока вы не подтвердите выполнение задания."
+
+    if order.type_order == "🔥":
+        type_order_name = "🔥 Выкуп + отзыв + избранное"
+
+    elif order.type_order == "💰":
+        type_order_name = "💰 Выкуп"
+
+    else:
+        type_order_name = "❤ Избранное"
+
+    # Уведомление о новых заданиях
+    await send_to_users(text=f"🥳 Привет, у нас появились новые задания!\n"
+                             f"Появилось новое задание {order.order_name} в категории {type_order_name}.\n"
+                             f"Успейте сделать, пока его не выполнили другие!")
 
     markup = await process_successful_payment_kb()
 

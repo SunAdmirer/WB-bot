@@ -8,13 +8,11 @@ from utils.db_api.commands.orders_cmds import get_order_by_id, update_moderate_o
     get_moderate_performers_order, get_media_content
 
 from utils.db_api.commands.users_cmds import get_user_by_id
-
-
-# Подтверждение/Отклонение выполнения заказа
 from utils.send_to_customers_media import send_to_customers_media
 from utils.send_to_customers_performed_order import send_to_customers_performed_order
 
 
+# Подтверждение/Отклонение выполнения заказа
 @dp.callback_query_handler(IsGroups(), admins_confirmed_cd.filter(confirm_type='performed_confirm'), state="*")
 async def admins_performed_confirm_order(call: types.CallbackQuery, callback_data: dict, state: FSMContext, **kwargs):
     nav_btn = callback_data.get('nav_btn')
