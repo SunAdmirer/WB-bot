@@ -9,7 +9,7 @@ async def notification_one_day_after_take_order(reserved_order_id: int):
     order = await get_order_by_id(reserved_order.order_id)
 
     performer = await get_user_by_id(reserved_order.user_id)
-    customer = await get_order_by_id(order.user_id)
+    customer = await get_user_by_id(order.user_id)
 
     performer_mention = f"<a href=\"tg://user?id={performer.telegram_id}\">{performer.username}</a>"
     customer_mention = f"<a href=\"tg://user?id={customer.telegram_id}\">{customer.username}</a>"
