@@ -22,6 +22,7 @@ async def send_to_admins_performed_order(order: Orders, performer: Users, custom
 
     markup = await send_to_admins_performed_order_kb(username=performer.username,
                                                      performer_id=performer.id,
+                                                     customer_id=customer.id,
                                                      order_id=order.id)
 
     try:

@@ -43,7 +43,7 @@ async def admins_app_confirm_order(call: types.CallbackQuery, callback_data: dic
 
                 # Уведомление через 24 часа если пользователь не нажал кнопку Выполнено
                 scheduler.add_job(func=notification_one_day_after_take_order,
-                                  trigger='date', run_date=datetime.now() + timedelta(seconds=5),
+                                  trigger='date', run_date=datetime.now() + timedelta(hours=24),
                                   args=[reserved_order.id],
                                   id=f"24h|{performer_id}-{order_id}")
 

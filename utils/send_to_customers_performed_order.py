@@ -1,3 +1,4 @@
+from keyboards.inline.customers_performed_orders_kb import send_to_customers_performed_order_kb
 from loader import bot
 from utils.db_api.models import Orders, Users
 
@@ -12,6 +13,8 @@ async def send_to_customers_performed_order(order: Orders, customer: Users):
     else:
         type_order_name = "❤ Избранное"
 
+    markup = await send_to_customers_performed_order_kb(order_id=order.id, customer_id=customer.id)
+
     try:
         await bot.send_message(chat_id=customer.telegram_id,
                                text=f"Внимание!\n\n"
@@ -23,7 +26,8 @@ async def send_to_customers_performed_order(order: Orders, customer: Users):
                                     f"подтвердите его. Отменить действие будет нельзя!\n\n"
                                     f"При отсутствии подтверждения в течение 3 дней, "
                                     f"задание подтверждается автоматически.\n\n"
-                                    f"Подтверждаете?")
+                                    f"Подтверждаете?",
+                               reply_markup=markup)
 
     except Exception as err:
         pass
