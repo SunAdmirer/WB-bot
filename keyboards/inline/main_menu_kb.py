@@ -1,5 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+from data.config import SUPPORT_LINK
 from keyboards.inline.callback_datas import main_menu_cd
 
 
@@ -27,9 +28,7 @@ async def main_menu_kb() -> InlineKeyboardMarkup:
             ],
             [
                 InlineKeyboardButton(text="💬 Поддержка",
-                                     callback_data=main_menu_cd.new(
-                                         nav_btn="support"
-                                     )),
+                                     url=SUPPORT_LINK),
                 InlineKeyboardButton(text="💵 Баланс",
                                      callback_data=main_menu_cd.new(
                                          nav_btn="balance"

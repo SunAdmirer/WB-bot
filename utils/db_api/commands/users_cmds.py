@@ -1,6 +1,6 @@
 from typing import List
 
-from utils.db_api.models import Users
+from utils.db_api.models import Users, Referrals
 from loguru import logger
 
 
@@ -19,6 +19,14 @@ async def add_user(telegram_id: int, username: str) -> Users:
 async def get_all_users() -> List[Users]:
     try:
         return await Users.query.gino.all()
+    except Exception as ex:
+        logger.info(ex)
+
+
+# Получить кол-во рекрутов
+async def count_recruit(recruiter_id) -> int:
+    try:
+        return len(await Referrals.query.where(Referrals.recruiter_id == recruiter_id).gino.all())
     except Exception as ex:
         logger.info(ex)
 
@@ -59,6 +67,15 @@ async def increase_user_balance(user_id: int, amount: float):
 async def increase_user_balance_from_ref(user_id: int, amount: float):
     try:
         await Users.update.values(balance_from_ref=Users.balance_from_ref + amount).where(Users.id == user_id).gino.status()
+    except Exception as ex:
+        logger.info(ex)
+
+
+# Сколько заработал пользователь с реф. программы
+async def get_balance_from_ref(user_id: int) -> float:
+    try:
+        user: Users = await Users.query.where(Users.id == user_id).gino.first()
+        return user.balance_from_ref
     except Exception as ex:
         logger.info(ex)
 
