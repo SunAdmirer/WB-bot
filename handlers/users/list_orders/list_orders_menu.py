@@ -61,16 +61,20 @@ async def list_orders_menu(call: types.CallbackQuery, user: Users, state: FSMCon
     await call.message.edit_text(text=text, reply_markup=markup)
 
 
-async def show_order(call: types.CallbackQuery, user: Users, state: FSMContext, type_order: str, **kwargs):
+async def show_order(call: types.CallbackQuery, user: Users, state: FSMContext, type_order: str, order_id, **kwargs):
     data = await state.get_data()
 
     if type_order == '🔥':
         fire_orders: List[Orders] = data.get('fire_orders')
-        if fire_orders:
-            # Текущее задание
-            current_order = fire_orders.pop(0)
 
-            await state.update_data(fire_orders=fire_orders)
+        if fire_orders or order_id != '-':
+            if order_id != '-':
+                # Текущее задание
+                current_order = await get_order_by_id(int(order_id))
+            else:
+                # Текущее задание
+                current_order = fire_orders.pop(0)
+                await state.update_data(fire_orders=fire_orders)
 
             text = f"Услуга:\n" \
                    f"🔥 Выкуп + отзыв + избранное\n\n" \
@@ -99,11 +103,16 @@ async def show_order(call: types.CallbackQuery, user: Users, state: FSMContext, 
 
     elif type_order == '❤':
         favorites_orders: List[Orders] = data.get('favorites_orders')
-        if favorites_orders:
-            # Текущее задание
-            current_order = favorites_orders.pop(0)
 
-            await state.update_data(favorites_orders=favorites_orders)
+        if favorites_orders or order_id != '-':
+            if order_id != '-':
+                # Текущее задание
+                current_order = await get_order_by_id(int(order_id))
+            else:
+                # Текущее задание
+                current_order = favorites_orders.pop(0)
+
+                await state.update_data(favorites_orders=favorites_orders)
 
             text = f"Услуга:\n" \
                    f"❤ Избранное\n\n" \
@@ -124,11 +133,16 @@ async def show_order(call: types.CallbackQuery, user: Users, state: FSMContext, 
 
     else:
         redemption_orders: List[Orders] = data.get('redemption_orders')
-        if redemption_orders:
-            # Текущее задание
-            current_order = redemption_orders.pop(0)
 
-            await state.update_data(redemption_orders=redemption_orders)
+        if redemption_orders or order_id != '-':
+            if order_id != '-':
+                # Текущее задание
+                current_order = await get_order_by_id(int(order_id))
+            else:
+                # Текущее задание
+                current_order = redemption_orders.pop(0)
+
+                await state.update_data(redemption_orders=redemption_orders)
 
             text = f"Услуга:\n" \
                    f"💰 Выкуп\n\n" \
@@ -156,25 +170,22 @@ async def show_order(call: types.CallbackQuery, user: Users, state: FSMContext, 
 
 async def execute_order(call: types.CallbackQuery, user: Users, state: FSMContext,
                         type_order: str, order_id: int, **kwargs):
+    current_order = await get_order_by_id(order_id)
+
     execute_date = (datetime.now() - timedelta(days=7)).date()
+
     text = f"Внимание! Если вы нажимаете кнопку \"Выполнить\"," \
            f" то подтверждаете, что выполнение задания будет" \
            f" сделано в течение 7 дней до {execute_date}?\n\n" \
            f"❗ За вами зафиксируется место, и если задание" \
-           f" не будет выполнено, то ваш аккаунт попадает в бан.\n\n"
+           f" не будет выполнено, то ваш аккаунт попадает в бан.\n\n" \
+           "❗Обратите внимание на условия возврата.\n\n" \
+           "❗Проверьте, не заказывали ли ранее товар.\n\n" \
+           "❗После подтверждения за вами зафиксируется место" \
+           " и если задание не будет выполнено, то ваш аккаунт попадет в бан на время.\n\n" \
+           "Подтверждаете, что выполните задание в течение 7 дней?"
 
-    if type_order in '🔥💰':
-        text += "❗Обратите внимание на условия возврата.\n\n" \
-                "❗Проверьте, не заказывали ли ранее товар.\n\n" \
-                "❗После подтверждения за вами зафиксируется место" \
-                " и если задание не будет выполнено, то ваш аккаунт попадет в бан на время.\n\n" \
-                "Подтверждаете, что выполните задание в течение 7 дней?"
-    else:
-        text += "❗После подтверждения за вами зафиксируется место" \
-                " и если задание не будет выполнено, то ваш аккаунт попадет в бан на время.\n\n" \
-                "Подтверждаете, что выполните задание в течение 7 дней?"
-
-    markup = await execute_order_kb(order_id=order_id)
+    markup = await execute_order_kb(order_id=order_id, type_order=current_order.type_order)
 
     await call.message.edit_text(text=text, reply_markup=markup)
 
@@ -197,7 +208,7 @@ async def confirm_execute_order(call: types.CallbackQuery, user: Users, state: F
 async def list_orders_menu_nav(call: types.CallbackQuery, callback_data: dict, user: Users, state: FSMContext,
                                **kwargs):
     nav_btn = callback_data.get('nav_btn')
-    order_id = ''
+    order_id = callback_data.get('order_id')
 
     function = ''
 
@@ -205,11 +216,11 @@ async def list_orders_menu_nav(call: types.CallbackQuery, callback_data: dict, u
         function = show_order
 
     elif nav_btn == 'execute':
-        order_id = int(callback_data.get('order_id'))
+        order_id = int(order_id)
         function = execute_order
 
     elif nav_btn == 'confirm':
-        order_id = int(callback_data.get('order_id'))
+        order_id = int(order_id)
         function = confirm_execute_order
 
     await function(

@@ -5,7 +5,7 @@ from keyboards.inline.callback_datas import admins_confirmed_cd
 
 # Подтверждение/Отклонение заявки на бронирование заказа
 async def send_to_admins_app_order_kb(username: str, performer_id: int,
-                                      order_id: int) -> InlineKeyboardMarkup:
+                                      customer_id: int, order_id: int) -> InlineKeyboardMarkup:
     markup = InlineKeyboardMarkup(
         row_width=1,
         inline_keyboard=[
@@ -14,6 +14,7 @@ async def send_to_admins_app_order_kb(username: str, performer_id: int,
                                      callback_data=admins_confirmed_cd.new(
                                          confirm_type='app_confirm',
                                          performer_id=performer_id,
+                                         customer_id=customer_id,
                                          order_id=order_id,
                                          nav_btn='confirm'
                                      ))
@@ -23,6 +24,7 @@ async def send_to_admins_app_order_kb(username: str, performer_id: int,
                                      callback_data=admins_confirmed_cd.new(
                                          confirm_type='app_confirm',
                                          performer_id=performer_id,
+                                         customer_id=customer_id,
                                          order_id=order_id,
                                          nav_btn='reject'
                                      ))

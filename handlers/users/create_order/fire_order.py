@@ -144,8 +144,19 @@ async def valid_input_goods_name_fire_order(message: types.Message, user: Users,
 
 
 # Некорректный ввод названия товара с клавиатуры
+@dp.message_handler(NotBanned(), regexp=compile(r"^.{40,4000}$"), state="goods_name_fire_order")
+async def invalid_input_goods_name_favorites_order_(message: types.Message, user: Users, state: FSMContext, **kwargs):
+    print('1')
+    error_msg = await message.answer("Пожалуйста, введите название не больше 40 символов.")
+    await asyncio.sleep(5)
+    await message.delete()
+    await error_msg.delete()
+
+
+# Некорректный ввод названия товара с клавиатуры
 @dp.message_handler(NotBanned(), content_types=types.ContentTypes.ANY, state="goods_name_fire_order")
 async def invalid_input_goods_name_fire_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
+    print('2')
     error_msg = await message.answer("Пожалуйста, введите название товара")
     await asyncio.sleep(5)
     await message.delete()
@@ -182,6 +193,15 @@ async def valid_input_order_description_fire_order(message: types.Message, user:
 
     # Просим ввести цену товара
     await goods_cost_fire_order(call=call, user=user, state=state)
+
+
+# Некорректный ввод описание заказа с клавиатуры
+@dp.message_handler(NotBanned(), regexp=compile(r"^.{400,4000}$"), state="order_description_fire_order")
+async def invalid_input_order_description_fire_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
+    error_msg = await message.answer("Пожалуйста, введите описание не больше 400 символов")
+    await asyncio.sleep(5)
+    await message.delete()
+    await error_msg.delete()
 
 
 # Некорректный ввод описание заказа с клавиатуры
@@ -321,13 +341,8 @@ async def contacts_fire_order(call: types.CallbackQuery, user: Users, state: FSM
     text = f"Услуга: \n" \
            f"🔥 Выкуп + отзыв + избранное\n\n" \
            f"Введите номер телефона. Примеры ввода:\n" \
-           f"+7(903)888-88-88\n" \
-           f"8(999)99-999-99\n" \
-           f"+380(67)777-7-777\n" \
-           f"001-541-754-3010\n" \
-           f"+1-541-754-3010\n" \
-           f"19-49-89-636-48018\n" \
-           f"+233 205599853"
+           f"89999999999\n" \
+           f"+79999999999\n"
 
     markup = await contacts_fire_order_kb()
 
@@ -335,7 +350,7 @@ async def contacts_fire_order(call: types.CallbackQuery, user: Users, state: FSM
 
 
 # Корректный ввод номера телефона с клавиатуры
-@dp.message_handler(NotBanned(), regexp=compile(r"^(\s*)?(\+)?([- _():=+]?\d[- _():=+]?){10,14}(\s*)?$"),
+@dp.message_handler(NotBanned(), regexp=compile(r"^\+?\d{0,20}$"),
                     state="contacts_fire_order")
 async def valid_input_contacts_fire_order(message: types.Message, user: Users, state: FSMContext, **kwargs):
     call: types.CallbackQuery = (await state.get_data()).get("call")
@@ -373,7 +388,7 @@ async def confirm_fire_order(call: types.CallbackQuery, user: Users, state: FSMC
     # Получение заказа
     order = await get_order_by_id(order_id=current_order_id)
 
-    text = f"ПОДТВЕРДИТЕ ДАННЫЕ:\n\n" \
+    text = f"<b>ПОДТВЕРДИТЕ ДАННЫЕ:</b>\n\n" \
            f"Услуга:\n" \
            f"🔥 Выкуп + отзыв + избранное\n\n" \
            f"❤️ Комиссия сервиса за 1 услугу: {price} руб.\n" \

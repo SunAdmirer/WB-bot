@@ -7,11 +7,11 @@ async def show_order_kb(type_order: str, url: str, order_id: int) -> InlineKeybo
     markup = InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="Ссылка на товар",
+                InlineKeyboardButton(text="🔗 Ссылка",
                                      url=url)
             ],
             [
-                InlineKeyboardButton("Выполнить",
+                InlineKeyboardButton("☑️ Выполнить",
                                      callback_data=list_orders_cd.new(
                                          nav_btn="execute",
                                          order_id=order_id

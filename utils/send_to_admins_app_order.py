@@ -3,6 +3,7 @@ from aiogram import types
 from data.config import ADMINS_GROUP
 from keyboards.inline.send_to_admins_kb import send_to_admins_app_order_kb
 from loader import bot
+from utils.db_api.commands.users_cmds import get_user_by_id
 from utils.db_api.models import Orders, Users
 
 
@@ -18,8 +19,11 @@ async def send_to_admins_app_order(order: Orders, performer: Users):
     else:
         type_order_name = "❤ Избранное"
 
+    customer = await get_user_by_id(order.user_id)
+
     markup = await send_to_admins_app_order_kb(username=performer.username,
                                                performer_id=performer.id,
+                                               customer_id=customer.id,
                                                order_id=order.id)
 
     users_mention = f"<a href=\"tg://user?id={performer.telegram_id}\">{performer.username}</a>"
