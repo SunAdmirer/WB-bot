@@ -39,5 +39,5 @@ async def send_to_admins_app_order(order: Orders, performer: Users):
                                reply_markup=markup,
                                disable_web_page_preview=True)
 
-    except Exception as err:
-        print(err)
+    except Exception as ex:
+        pass

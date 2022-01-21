@@ -6,3 +6,4 @@ from . import create_order
 from . import list_orders
 from . import balance
 from . import my_orders
+from . import customers_confirm_orders

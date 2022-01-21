@@ -23,6 +23,13 @@ async def get_all_users() -> List[Users]:
         logger.info(ex)
 
 
+async def get_first_user() -> Users:
+    try:
+        return await Users.query.gino.first()
+    except Exception as ex:
+        logger.info(ex)
+
+
 # Получить кол-во рекрутов
 async def count_recruit(recruiter_id) -> int:
     try:

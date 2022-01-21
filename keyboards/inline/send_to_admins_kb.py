@@ -80,7 +80,7 @@ async def send_to_admins_performed_order_kb(username: str, performer_id: int,
 
 
 # Двойное Подтверждение/Отклонение выполнения заказа
-async def admins_performed_confirm_order_kb(performer_id: int,
+async def admins_performed_confirm_order_kb(performer_id: int, confirm_type: str,
                                             customer_id: int, order_id: int) -> InlineKeyboardMarkup:
     markup = InlineKeyboardMarkup(
         row_width=1,
@@ -88,21 +88,21 @@ async def admins_performed_confirm_order_kb(performer_id: int,
             [
                 InlineKeyboardButton(text="Да",
                                      callback_data=admins_confirmed_cd.new(
-                                         confirm_type='performed_confirm2',
+                                         confirm_type=confirm_type,
                                          performer_id=performer_id,
                                          customer_id=customer_id,
                                          order_id=order_id,
-                                         nav_btn='confirm'
+                                         nav_btn='yes'
                                      ))
             ],
             [
                 InlineKeyboardButton(text="Нет",
                                      callback_data=admins_confirmed_cd.new(
-                                         confirm_type='performed_confirm2',
+                                         confirm_type=confirm_type,
                                          performer_id=performer_id,
                                          customer_id=customer_id,
                                          order_id=order_id,
-                                         nav_btn='reject'
+                                         nav_btn='no'
                                      ))
             ]
         ]

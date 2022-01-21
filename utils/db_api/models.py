@@ -48,6 +48,7 @@ class Transaction(TimedBaseModel):
 
     query: sa.sql.Select
 
+    f = sa
     id = sa.Column(sa.Integer, primary_key=True, nullable=False, index=True)
     user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), index=True)
     amount = sa.Column(sa.Numeric(precision=10, scale=2), default=0, nullable=False)  # Сумма пополнения

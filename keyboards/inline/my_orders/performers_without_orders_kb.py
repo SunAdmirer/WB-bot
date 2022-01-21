@@ -7,9 +7,9 @@ async def performers_without_orders_kb() -> InlineKeyboardMarkup:
     markup = InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="➕ Создать заказ",
+                InlineKeyboardButton(text="💰 Биржа заданий",
                                      callback_data=main_menu_cd.new(
-                                         nav_btn="create_order"
+                                         nav_btn="list_orders"
                                      ))
             ],
             [

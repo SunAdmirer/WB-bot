@@ -4,7 +4,8 @@ from aiogram.utils.callback_data import CallbackData
 admins_confirmed_cd = CallbackData('admins_confirmed', 'confirm_type', 'performer_id',
                                    'customer_id', 'order_id', 'nav_btn')
 
-customers_confirmed_cd = CallbackData('customers_confirmed', 'confirm_type', 'performer_id', 'customer_id', 'order_id')
+customers_confirmed_cd = CallbackData('customers_confirmed', 'confirm_type', 'performer_id',
+                                      'customer_id', 'order_id', 'nav_btn')
 
 # CallbackData для кнопки Назад, главного меню и тд
 back_btn_cd = CallbackData('back_btn', 'nav_btn')

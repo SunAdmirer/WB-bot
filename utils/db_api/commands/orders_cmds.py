@@ -13,6 +13,23 @@ async def add_moderate_order(order_id: int, user_id: int) -> ModerateOrders:
         logger.info(ex)
 
 
+# Удалить заказ в модерации
+async def delete_moderate_order(order_id: int, user_id: int) -> ModerateOrders:
+    try:
+        return await ModerateOrders.delete.where(ModerateOrders.order_id == order_id,
+                                                 ModerateOrders.user_id == user_id).gino.status()
+    except Exception as ex:
+        logger.info(ex)
+
+
+# Добавить заказ в "Выполненные"
+async def add_performed_order(order_id: int, user_id: int):
+    try:
+        await PerformedOrders(order_id=order_id, user_id=user_id).create()
+    except Exception as ex:
+        logger.info(ex)
+
+
 # Добавление заказа
 async def add_order(user_id: int, type_order: str) -> Orders:
     try:
@@ -27,10 +44,26 @@ async def add_order(user_id: int, type_order: str) -> Orders:
         logger.info(ex)
 
 
+async def delete_order(order_id: int):
+    try:
+        await Orders.delete.where(Orders.id == order_id).gino.status()
+    except Exception as ex:
+        logger.info(ex)
+
+
 # Бронируем выполнение задания за пользователем
 async def add_reserved_order_to_user(user_id: int, order_id: int) -> ReservedOrders:
     try:
         return await ReservedOrders(order_id=order_id, user_id=user_id).create()
+    except Exception as ex:
+        logger.info(ex)
+
+
+# Удаление выполнение задания за пользователем
+async def delete_reserved_order_to_user(user_id: int, order_id: int) -> ReservedOrders:
+    try:
+        return await ReservedOrders.delete.where(ReservedOrders.order_id == order_id,
+                                                 ReservedOrders.user_id == user_id).gino.status()
     except Exception as ex:
         logger.info(ex)
 
@@ -396,5 +429,13 @@ async def update_moderate_order_confirmed(order_id: int, confirmed: bool):
 async def increase_by_1_orders_total_amount(order_id: int):
     try:
         await Orders.update.values(total_amount=Orders.total_amount + 1).where(Orders.id == order_id).gino.status()
+    except Exception as ex:
+        logger.info(ex)
+
+
+# Уменьшить total_amount заказа на 1
+async def decrease_by_1_orders_total_amount(order_id: int):
+    try:
+        await Orders.update.values(total_amount=Orders.total_amount - 1).where(Orders.id == order_id).gino.status()
     except Exception as ex:
         logger.info(ex)

@@ -8,23 +8,21 @@ from keyboards.app_reject_kb import app_reject_kb
 from keyboards.inline.app_confirm_kb import app_confirm_kb
 from keyboards.inline.callback_datas import admins_confirmed_cd
 from loader import dp, bot, scheduler
-
 from utils.db_api.commands.orders_cmds import add_reserved_order_to_user, increase_by_1_orders_total_amount, \
     get_order_by_id, get_reserved_performers_order_by_id
+from utils.db_api.commands.users_cmds import get_user_by_id
+from utils.one_day_after_take_order import notification_one_day_after_take_order
+from loguru import logger
 
 
 # Подтверждение/Отклонение заявки на бронирование заказа
-from utils.db_api.commands.users_cmds import get_user_by_telegram_id
-from utils.one_day_after_take_order import notification_one_day_after_take_order
-
-
 @dp.callback_query_handler(IsGroups(), admins_confirmed_cd.filter(confirm_type='app_confirm'), state="*")
 async def admins_app_confirm_order(call: types.CallbackQuery, callback_data: dict, state: FSMContext, **kwargs):
     nav_btn = callback_data.get('nav_btn')
     performer_id = int(callback_data.get('performer_id'))
     order_id = int(callback_data.get('order_id'))
 
-    performer = await get_user_by_telegram_id(performer_id)
+    performer = await get_user_by_id(performer_id)
 
     if nav_btn == "confirm":  # Подтверждение заявки на бронирование заказа
         # Достаем заказ
@@ -56,8 +54,8 @@ async def admins_app_confirm_order(call: types.CallbackQuery, callback_data: dic
                                                 "Перейдите в раздел \"Мои заказы\" - \"Я исполнитель\" - "
                                                 "\"Ожидают выполнения\", чтобы продолжить выполнение заказа",
                                            reply_markup=markup)
-                except:
-                    pass
+                except Exception as ex:
+                    logger.info(ex)
 
                 await call.message.edit_text(f"✅ Подтверждение заявки на бронирование заказа({order_id}) одобрено!",
                                              reply_markup=None)
@@ -70,8 +68,8 @@ async def admins_app_confirm_order(call: types.CallbackQuery, callback_data: dic
                                            text=f"❌ Подтверждение заявки на бронирование заказа({order_id}) отклонено!\n\n"
                                                 f"Ви уже виполняете этот заказ!",
                                            reply_markup=markup)
-                except:
-                    pass
+                except Exception as ex:
+                    logger.info(ex)
 
                 await call.message.edit_text(f"❌ Исполнитерь уже выполняет заказ!",
                                              reply_markup=None)
@@ -85,8 +83,8 @@ async def admins_app_confirm_order(call: types.CallbackQuery, callback_data: dic
                                        text=f"❌ Подтверждение заявки на бронирование заказа({order_id}) отклонено!\n\n"
                                             f"На заказ набралось достаточно исполнителей!",
                                        reply_markup=markup)
-            except:
-                pass
+            except Exception as ex:
+                logger.info(ex)
 
             await call.message.edit_text(f"❌ На заказ({order_id}) набралось достаточно исполнителей!",
                                          reply_markup=None)
@@ -99,8 +97,8 @@ async def admins_app_confirm_order(call: types.CallbackQuery, callback_data: dic
             await bot.send_message(chat_id=performer.telegram_id,
                                    text=f"❌ Подтверждение заявки на бронирование заказа({order_id}) отклонено!\n\n",
                                    reply_markup=markup)
-        except:
-            pass
+        except Exception as ex:
+            logger.info(ex)
 
         await call.message.edit_text(f"❌ Подтверждение заявки на бронирование заказа({order_id}) отклонена!",
                                      reply_markup=None)

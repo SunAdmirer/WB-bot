@@ -54,8 +54,8 @@ async def my_orders_performers(call: types.CallbackQuery, user: Users, state: FS
 
     else:
         text = "🛒 Мои заказы\n\n" \
-               "🤷‍♂️ У вас нет заказов.\n\n" \
-               "Хотите создать первый заказ?"
+               "🤷‍♂️ У вас нет выполненных заказов.\n\n" \
+               "Хотите выполнить первый заказ?"
 
         markup = await performers_without_orders_kb()
 
@@ -136,7 +136,6 @@ async def paginator_orders(call: types.CallbackQuery, callback_data: dict, user:
 @dp.callback_query_handler(NotBanned(), choose_performers_orders_cd.filter(), state="*")
 async def choose_performers_order(call: types.CallbackQuery, user: Users, state: FSMContext,
                                   callback_data: dict = None, **kwargs):
-
     if callback_data:
         order_id = int(callback_data.get("order"))
         type_order = callback_data.get("type_order")
@@ -254,6 +253,16 @@ async def invalid_get_photo_check_for_execution(message: types.Message, user: Us
 async def confirm_screenshots(call: types.CallbackQuery, callback_data: dict, user: Users, state: FSMContext):
     order_id = int(callback_data.get("order"))
     type_order = callback_data.get("type_order")
+
+    photos = (await state.get_data()).get("photos")
+
+    # Если пользователь не ввел ни одного скриншота
+    if len(photos) == 0:
+        msg = await call.message.answer("Пожалуйста, прикрепите скриншоты для подтверждения задания (до 5 шт)\n\n"
+                                        "Отправьте скриншоты только фото (не файлом!)")
+        await asyncio.sleep(5)
+        await msg.delete()
+        return
 
     # Получаем заказ
     order = await get_order_by_id(order_id)
